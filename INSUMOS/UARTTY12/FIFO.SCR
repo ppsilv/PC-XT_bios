@@ -1,0 +1,48 @@
+A
+JMP     0123
+NOP
+AND     [BX+DI],DH
+SS:
+XOR     AX,3035
+AND     [DI+41],DL
+PUSH    DX
+PUSH    SP
+AND     [BX+SI],AH
+AND     [BX+SI],AH
+AND     AL,20
+CMP     [BP+SI],DH
+XOR     AX,2030
+PUSH    BP
+INC     CX
+PUSH    DX
+PUSH    SP
+AND     [BX+SI],AH
+AND     [BX+SI],AH
+AND     [SI],AH
+MOV     DX,03F8
+ADD     DX,+02
+MOV     AL,C1
+OUT     DX,AL
+XOR     AX,AX
+IN      AL,DX
+PUSH    AX
+AND     AL,C0
+CMP     AL,C0
+JNZ     013D
+LEA     DX,[0103]
+JMP     0141
+NOP
+LEA     DX,[0113]
+MOV     AH,09
+INT     21
+POP     AX
+MOV     AH,4C
+INT     21
+RET
+
+N FIFO.COM
+RCX
+4B
+W
+Q
+
