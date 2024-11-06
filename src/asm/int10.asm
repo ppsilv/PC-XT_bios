@@ -13,6 +13,10 @@
 ;40:66	byte	CGA current color palette mask setting (port 3d9h)
 ;				EGA and VGA values emulate the CGA
 INT10:  ;Video
+	;MOV DX, 0X3f8
+	;OUT DX, AL
+	call printch 
+	IRET
 	CMP AH, 0X00		;SET VIDEO MODE		
 	JZ INT10_AH_00	
 	CMP AH, 0X02 		;SET CURSOR POSITION

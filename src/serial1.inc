@@ -204,82 +204,82 @@ wait_for_port:
 ; Output:
 ;	none (updates BIOS data area)
 ;-------------------------------------------------------------------------
-detect_serial:
-	push	ax
-	push	bx
-	push	dx
-	push	si
-	mov	al,e_serial_scan
-	out	post_reg,al
-
-	mov	si,msg_serial
-	call	print
-	mov	bx,0101h		; the default timeout is 1 sec
-	mov	word [serial_timeout],bx   ; initialize timeout values
-	mov	word [serial_timeout+2],bx ; for all 4 ports
-	xor	bx,bx			; BX = 0
-.detect_loop:
-	mov	si,msg_serial_com
-	call	print
-	mov	al,bl
-	shr	al,1
-	inc	al			; AL = COM port number (1..4)
-	call	print_digit
-	mov	si,msg_colon
-	call	print
-    cs	mov	dx,word [uart_ier_regs+bx] ; DX = UART IER address
-	in	al,dx
-	mov	al,0Fh
-	out	dx,al			; enable interrupts
-	mov	al,00h
-	out	unused_reg,al		; clear ISA data bus floating signals
-	in	al,dx			; get interrupt enable register to AL
-	cmp	al,0Fh
-	jne	.no_port		; no port at this address
-	mov	al,00h
-	out	dx,al			; disable interrupts
-	mov	al,0FFh
-	out	unused_reg,al		; set ISA data bus floating signals
-	in	al,dx			; get interrupt enable register to AL
-	cmp	al,00h
-	jne	.no_port		; no port at this address
-	dec	dx			; DX = UART base address
-					; OPTIMIZATION:
-					; uart_base = uart_ier_reg - 1
-	mov	word [equip_serial+bx],dx ; store port address to the BIOS
-					; data area
-	add	word [equipment_list],0200h ; increment number of serial ports
-	mov	ax,dx
-	call	print_hex
-	jmp	.next
-
-.no_port:
-	mov	word [equip_serial+bx],0 ; no port
-	mov	si,msg_none
-	call	print
-	
-.next:
-	inc	bx
-	inc	bx
-	cmp	bx,(num_serial << 1)	; all serial ports have been scanned?
-	je	.done
-	mov	si,msg_semicolon
-	call	print
-	jmp	.detect_loop
-
-.done:
-	mov	si,msg_crlf
-	call	print
-
-	pop	si
-	pop	dx
-	pop	bx
-	pop	ax
-	ret
-
+;;detect_serial:
+;;	push	ax
+;;	push	bx
+;;	push	dx
+;;	push	si
+;;	mov	al,e_serial_scan
+;;	out	post_reg,al
+;;
+;;	mov	si,msg_serial
+;;	call	print
+;;	mov	bx,0101h		; the default timeout is 1 sec
+;;	mov	word [serial_timeout],bx   ; initialize timeout values
+;;	mov	word [serial_timeout+2],bx ; for all 4 ports
+;;	xor	bx,bx			; BX = 0
+;;.detect_loop:
+;;	mov	si,msg_serial_com
+;;	call	print
+;;	mov	al,bl
+;;	shr	al,1
+;;	inc	al			; AL = COM port number (1..4)
+;;	call	print_digit
+;;	mov	si,msg_colon
+;;	call	print
+;;    cs	mov	dx,word [uart_ier_regs+bx] ; DX = UART IER address
+;;	in	al,dx
+;;	mov	al,0Fh
+;;	out	dx,al			; enable interrupts
+;;	mov	al,00h
+;;	out	unused_reg,al		; clear ISA data bus floating signals
+;;	in	al,dx			; get interrupt enable register to AL
+;;	cmp	al,0Fh
+;;	jne	.no_port		; no port at this address
+;;	mov	al,00h
+;;	out	dx,al			; disable interrupts
+;;	mov	al,0FFh
+;;	out	unused_reg,al		; set ISA data bus floating signals
+;;	in	al,dx			; get interrupt enable register to AL
+;;	cmp	al,00h
+;;	jne	.no_port		; no port at this address
+;;	dec	dx			; DX = UART base address
+;;					; OPTIMIZATION:
+;;					; uart_base = uart_ier_reg - 1
+;;	mov	word [equip_serial+bx],dx ; store port address to the BIOS
+;;					; data area
+;;	add	word [equipment_list],0200h ; increment number of serial ports
+;;	mov	ax,dx
+;;	call	print_hex
+;;	jmp	.next
+;;
+;;.no_port:
+;;	mov	word [equip_serial+bx],0 ; no port
+;;	mov	si,msg_none
+;;	call	print
+;;	
+;;.next:
+;;	inc	bx
+;;	inc	bx
+;;	cmp	bx,(num_serial << 1)	; all serial ports have been scanned?
+;;	je	.done
+;;	mov	si,msg_semicolon
+;;	call	print
+;;	jmp	.detect_loop
+;;
+;;.done:
+;;	mov	si,msg_crlf
+;;	call	print
+;;
+;;	pop	si
+;;	pop	dx
+;;	pop	bx
+;;	pop	ax
+;;	ret
+;;
 ;-------------------------------------------------------------------------
 ; serial port Interrupt Enable Register addresses - used for port detection
-uart_ier_regs	dw	(0xF8 + uart_ier_reg), (0xF8 + uart_ier_reg)
+uart_ier_regs	dw	(0x3F8 + uart_ier_reg), (0x2F8 + uart_ier_reg)
 		dw	(3E8h + uart_ier_reg), (2E8h + uart_ier_reg)
 
 ;-------------------------------------------------------------------------

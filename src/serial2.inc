@@ -30,8 +30,8 @@
 ;=========================================================================
 ; int_14 - BIOS Serial Port Communication Services
 ;-------------------------------------------------------------------------
-	setloc	0E729h			; INT 14 Entry Point
-int_14:
+	;setloc	0E729h			; INT 14 Entry Point
+INT14:
 	sti
 	push	cx
 	push	dx
@@ -73,8 +73,8 @@ int_14_exit:
 	pop	si
 	pop	dx
 	pop	cx
-	ret
-;	iret
+;	ret
+	iret
 
 ;=========================================================================
 ; int_14_fn00 - Initialize serial port
